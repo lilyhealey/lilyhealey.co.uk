@@ -1,0 +1,15 @@
+# der
+.DS_Store
+*~
+
+# media files
+*.gif
+*.jpeg
+*.jpg
+*.pdf
+*.png
+
+# server-config
+config.php
+.htpasswd
+.htaccess
