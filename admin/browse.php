@@ -1,83 +1,77 @@
 <?php require_once("inc/head.php"); 
 
 //  get children (if any)
-$ob = new Objects;
+$children = $ob->children($r->o);
 
-$fields = array("objects.name1", "objects.id AS objectsId");
-$tables = array("objects", "wires");
-$where = array(	"wires.fromid = '". $objects[$o]."'",
-				"wires.toid = objects.id",
-				"wires.active = '1'",
-				"objects.active = '1'");
-$order = array(	"objects.rank", 
-				"name1");
+$pad = floor(log10(count($children))) + 1;
+if($pad < 2) 
+	$pad = 2;
 
-$items = $ob->get_all($fields, $tables, $where, $order);
-$padout = floor(log10(count($items))) + 1;
-if ($padout < 2) 
-	$padout = 2;
-$i = 0;
-$ca = array();
-
-foreach($items as $item)
+for($i = 0; $i < count($children); $i++)
 {
-	// object name
-	$name = $item["name1"];
+	// truncate long names
+	$name = $children[$i]["name1"];
 	if (strlen($name) > 60)
 		$name = substr($name, 0, 60) ."...";
-	$ca[$i]["name"] = strip_tags($name);
+	$children[$i]["name"] = strip_tags($name);
 	
 	// object url
-	$ca[$i]["url"] = $admin_path . "browse.php" . urlData();
-	if (sizeof($objects))
-		$ca[$i]["url"] .= ",";
-	$ca[$i]["url"] .= $item["objectsId"];
+	$children[$i]["url"] = $admin_path . "browse.php" . $r->url_data();
+	if (sizeof($r->objects))
+		$children[$i]["url"] .= ",";
+	$children[$i]["url"] .= $children[$i]["o"];
 	
 	// object 0-padded index
-	$ca[$i]["n"] = STR_PAD($i+1, $padout, "0", STR_PAD_LEFT);
-	$i++;
+	$children[$i]["n"] = str_pad($i+1, $pad, "0", STR_PAD_LEFT);
 }
 
-if($objects[$o])
-	$item = $ob->get($objects[$o]);
+if($r->o)
+	$item = $ob->get($r->o);
 else
 	$item = $ob->get(0);
 $name = strip_tags($item["name1"]);
+
 ?>
 <div id="body-container">
 	<div id="body">
-		<div class="parent-container"><?php
-			for($i = 0; $i < count($refs); $i++)
-				echo $refs[$i];
+		<div class="parent-container"><?php 
+			for($i = 0; $i < count($parents); $i++) 
+			{ 
+			?><div class="parent">
+				<a href="<?php echo $parents[$i]['url']; ?>"><? 
+					echo $parents[$i]['name'];
+				?></a>
+			</div><?php 
+			} 
 		?></div>
 		<div class="self-container">
 			<div class="self"><?php 
-				if($object) { ?>
+				if($r->o) { ?>
 				<span><?php echo $name; ?></span>
 				<span>
-					<a href="edit.php<?php echo urlData(); ?>">edit</a>
+					<a href="edit.php<?php echo $r->url_data(); ?>">edit</a>
 				</span>
 				<span>
-					<a href="delete.php<?php echo urlData(); ?>">delete</a>
+					<a href="delete.php<?php echo $r->url_data(); ?>">delete</a>
 				</span><?php } 
 			?></div>
 		</div>
 		<div class="children-container"><?php
-			for($i = 0; $i < count($ca); $i++)
+			for($i = 0; $i < count($children); $i++)
 			{
 			?><div class="child">
-				<span><? echo $ca[$i]["n"];?></span>
+				<span><? echo $children[$i]["n"]; ?></span>
 				<span>
-					<a href="<? echo $ca[$i]['url'];?>"><?
-						echo $ca[$i]["name"];
+					<a href="<? echo $children[$i]['url'];?>"><?
+						echo $children[$i]["name"];
 					?></a>
 				</span>
 			</div><?php
 			}
 		?></div>
 		<div class="actions">
-			<a href="add.php<?php echo urlData(); ?>">add object</a>
-			<a href="link.php<?php echo urlData(); ?>">link</a>
+			<a href="add.php<?php echo $r->url_data(); ?>">add object</a>
+			<a href="link.php<?php echo $r->url_data(); ?>">link</a>
 		</div>
 	</div>
 </div>

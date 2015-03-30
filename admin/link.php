@@ -1,107 +1,74 @@
-<?php require_once("inc/head.php"); 
-
-if ($action != "link") { ?>
-
-	<!--  LINK TO EXISTING OBJECT  -->
-
-	<p>You are linking to an existing object.</p>
-	<p>The linked object will remain in its original location and also appear here.</p>
-	<p>Please choose from the list of active objects:</p>
-	<table cellpadding="0" cellspacing="0" border="0">
-		<form 
-			enctype="multipart/form-data" 
-			action="<?php echo $dbAdmin ."link.php". urlData(); ?>" 
-			method="post" 
-			style="padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"
-		>
-			<tr>
-				<td colspan = '2'>
-					<select name='wirestoid'>
-						<?php
-	
-							/* 	Developed query to only get currently active wires, 
-								but includes redundant records which is confusing 
-								so suppress in printout */
-							$sql = "SELECT 
-										objects.id, 
-										objects.name1, 
-										wires.fromid, 
-										wires.toid 
-									FROM 
-										objects, 
-										wires 
-									WHERE 
-										objects.active=1 
-										AND wires.toid=objects.id 
-										AND wires.active = 1 
-										AND wires.fromid != $object 
-										AND objects.id != $object 
-									ORDER BY objects.name1";
-
-							// Simple query, just active objects
-							/*
-							$sql = "SELECT 
-										objects.id, 
-										objects.name1 
-									FROM objects 
-									WHERE 
-										objects.active=1 
-										AND objects.id != $object 
-									ORDER BY objects.name1";
-							*/
-		
-							$result = MYSQL_QUERY($sql);
-							while ( $myrow = MYSQL_FETCH_ARRAY($result)) 
-							{
-								// Suppress multiple appearances of an object
-								// Suppress roots (+) and hidden objects (.)	
-								$lastObjectName = $thisObjectName;
-								$thisObjectName = $myrow['name1'];
-
-								if (substr($thisObjectName, 0, 1) != "+" && 
-									substr($thisObjectName, 0,1) != "." && 
-									$thisObjectName != $lastObjectName)
-									echo "\n<option value=".$myrow['id'].">" . $myrow['name1'] . "</option>"; 
-							}
-						?>	
-					</select>
-					<br />&nbsp;
-				</td>
-			</tr>
-		</table>
-
-		<br />
-		<br />
-		<br />
-		<input name='action' type='hidden' value='link' />
-		<input 
-			name='cancel' 
-			type='button' 
-			value='Cancel' 
-			onClick="javascript:location.href='<?php echo "browse.php". urlData();?>';"
-		/>
-		<input 
-			name='submit'
-			type='submit'
-			value='Link to Object'
-		/>
+<?php require_once("inc/head.php"); ?>
+<div id="body-container">
+<div id="body">
+	<div class="parent-container"><?php 
+		for($i = 0; $i < count($parents); $i++) 
+		{ 
+		?><div class="parent">
+			<a href="<?php echo $parents[$i]['url']; ?>"><? 
+				echo $parents[$i]['name'];
+			?></a>
+		</div><?php 
+		} 
+	?></div><?php
+if ($r->action != "link") 
+{
+?><div class="self-container">
+	<div class="self">
+		<a href="browse.php<?php echo $r->url_data(); ?>"><?php echo $name ?></a>
+	</div>
+	<div class="self">
+		<p>You are linking to an existing object.</p>
+		<p>The linked object will remain in its original location and also appear here.</p>
+		<p>Please choose from the list of active objects:</p>
+	</div>
+</div>
+<div id="form-container">
+	<form 
+		enctype="multipart/form-data" 
+		action="<? echo $admin_host; ?>link.php<? echo $r->url_data(); ?>" 
+		method="post" 
+	>
+		<div class="form">
+			<div>
+				<select name='wires_toid'><?php
+					$items = $ob->unlinked_list($r->o);
+					for($i = 0; $i < count($items); $i++)
+					{
+					?><option value="<? echo $items[$i]['id']; ?>"><?php 
+						echo $items[$i]['name1']; 
+					?></option><?php	
+					}
+				?></select>
+			</div>
+			<div>
+				<input name='action' type='hidden' value='link'>
+				<input 
+					name='cancel' 
+					type='button' 
+					value='Cancel' 
+					onClick="javascript:location.href='<? echo "browse.php".$r->url_data();?>';"
+				>
+				<input name='submit' type='submit' value='Link to Object'>
+			</div>
+		</div>
 	</form>
-	<br />&nbsp;
-	<?php } 
-	else 
-	{
-		if (!get_magic_quotes_gpc())
-			$wirestoid = addslashes($wirestoid);
-
-		/* wires */
-		$dt = date("Y-m-d H:i:s");
-		$sql = "INSERT INTO 
-					wires (created, modified, fromid, toid) 
-				VALUES('$dt', '$dt', '$object', '$wirestoid')";
-		$result = MYSQL_QUERY($sql);
-
-		echo "Object linked successfully.<br /><br />";
-		echo "<a href='". $dbAdmin ."browse.php". urlData() ."'>CONTINUE...</a>";
-	}
-
-require_once("inc/foot.php"); ?>
+</div><?php 
+} 
+else 
+{
+	/* wires */
+	$wires_toid = addslashes($r->wires_toid);
+	$ww->create_wire($r->o, $wires_toid);
+	?><div class="self-container">
+		<div class="self">
+			Object linked successfully
+		</div>
+		<div class="self">
+			<a href="<? echo $admin_host; ?>browse.php<? echo $r->url_data() ?>">continue...</a>
+		</div>
+	</div><?php 
+}
+?></div>
+</div>
+<?php require_once("inc/foot.php"); ?>

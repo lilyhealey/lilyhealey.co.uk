@@ -1,120 +1,123 @@
-<?php require_once("inc/head.php"); 
-
-if (strtolower($action) != "delete") 
+<?php require_once("inc/head.php");?>
+<div id="body-container">
+<div id="body">
+	<div class="parent-container"><?php 
+		for($i = 0; $i < count($parents); $i++) 
+		{ 
+		?><div class="parent">
+			<a href="<?php echo $parents[$i]['url']; ?>"><? 
+				echo $parents[$i]['name'];
+			?></a>
+		</div><?php 
+		} 
+	?></div>
+<?php
+if (strtolower($r->action) != "delete") 
 {
 	//  Get ALL objects where "fromid" = this object about to be deleted
-	$connectedAll = array();
-	$i = 0;
-	$sql = "SELECT 
-				*, 
-				objects.id AS objectId 
-			FROM 
-				wires, 
-				objects 
-			WHERE 
-				wires.fromid = '$object' 
-			AND wires.toid = objects.id 
-			AND wires.active = 1 
-			AND objects.active = 1 
-			ORDER BY 
-				name1, 
-				name2";
-	$result = MYSQL_QUERY($sql);
-	while ($myrow = MYSQL_FETCH_ARRAY($result)) 
-	{
-		$connectedAll[$i] = array();
-		$connectedAll[$i]["id"] = $myrow["objectId"];
-		$connectedAll[$i]["name"] = $myrow["name1"];
-		if ($myrow["name2"])
-			$connectedAll[$i]["name"] .= " ". $myrow["name2"];
-		if (strlen($connectedAll[$i]["name"]) > 40)
-			$connectedAll[$i]["name"] = substr($connectedAll[$i]["name"], 0, 60) ."...";
-		$connectedAll[$i]["dependent"] = TRUE;
-		$i++;
-	}
-
-	//  Narrow down to objects dependent on this object about to be deleted
-	$j = $i;
+	$children = $ob->children($r->o);
+	
+	// determine if children have other ancestors
+	// ie, will they be orphaned after this object is deleted
+	foreach($children as $child)
+		$child["dependent"] = TRUE;
+	$fields = array("fromid");
+	$tables = array("wires");
+	$where 	= array("active = '1'");
 	$k = 0;
-	for ($i = 0; $i < $j; $i++) 
+	for($i = 0; $i < count($children); $i++)
 	{
-		$sql = "SELECT * 
-				FROM wires 
-				WHERE toid = '". $connectedAll[$i]["id"] ."' 
-				ORDER BY modified DESC";
-		$result = MYSQL_QUERY($sql);
-		while ($myrow = MYSQL_FETCH_ARRAY($result)) 
+		$where[] = "toid = '" . $children[$i]["o"] . "'";
+		$items = $ww->get_all($fields, $tables, $where);
+		for($j = 0; $j < count($items); $j++)
 		{
-			if ($myrow["fromid"] != $object)
-				$connectedAll[$i]["dependent"] = FALSE;
+			if($items[$j]["fromid"] != $r->o)
+				$children[$i]["dependent"] = FALSE;
 		}
-		if ($connectedAll[$i]["dependent"] == TRUE)
+		if($children[$i]["dependent"] = TRUE)
 			$k++;
 	}
-	
 	//  Display warning
 	?>
-	<div class='monoHvy'>
-		<p>WARNING!</p>
-		<p>You are about to permanently delete this object.</p>
-		<p>If this object is linked, the original will not be deleted.</p>
-	</div>
+	<div class="self-container">
+		<div class="self">WARNING!</div>
+		<div class="self">You are about to permanently delete this object.</div>
+		<div class="self">If this object is linked, the original will not be deleted.</div><?
+		if($k) 
+		{ 
+		?><div class="self">The following <? echo $k; ?> objects will also be deleted as a result: </div><?	
+		}
+	?></div>
 	<?php
 
 	$l = 0;
 	if ($k) 
 	{
-		$numrows = $k;
-		$padout = floor(log10($numrows)) + 1;
+		$padout = floor(log10($k)) + 1;
 		if ($padout < 2) 
 			$padout = 2;
-		echo "\nThe following ". $k ." objects will also be deleted as a result: <br /><br />";
-		for ($i = 0; $i < $j; $i++) 
+	?><div></div>
+		<div class="children-container"><?
+		
+		for ($i = 0; $i < count($children); $i++) 
 		{
-			$l++;
-			if ($connectedAll[$i]["dependent"] == TRUE) 
-				echo "\n";
-				echo STR_PAD($l, $padout, "0", STR_PAD_LEFT);
-				echo " <a href='" . $dbAdmin ."browse.php". urlData() .",". $connectedAll[$i]["id"] . "'>";
-				echo strip_tags($connectedAll[$i]["name"]) ."</a><br />";
+			$j++;
+			if ($children[$i]["dependent"] == TRUE)
+			{
+				$n = STR_PAD($j, $padout, "0", STR_PAD_LEFT);
+				$url = $admin_path . "browse.php" . $r->url_data() . "," . $children[$i]["o"];
+				$child_name = strip_tags($children[$i]["name1"]);
+				?><div class="child">
+					<span><? echo $n; ?></span>
+					<a href="<?php echo $url; ?>"><?php echo $child_name; ?></a>
+				</div><?php
+			}
 		}
+		?></div><?php
 	}
-
-	?>
-	<form action="<?php echo $PHP_SELF . urlData(); ?>" method="post">
-		<input name='action' type='hidden' value='delete'>
-		<input name='cancel' type='button' value='Cancel' onClick="javascript:history.back();"> 
-		<input name='submit' type='submit' value='Delete Object'>
-	</form>
-	<?php
+	?><div id="form-container">
+		<form action="<?php echo $PHP_SELF . $r->url_data(); ?>" method="post">
+			<div class="form">
+				<input name='action' type='hidden' value='delete'>
+				<input 
+					name='cancel' 
+					type='button' 
+					value='Cancel' 
+					onClick="javascript:history.back();"
+				> 
+				<input 
+					name='submit' 
+					type='submit' 
+					value='Delete Object'
+				>
+			</div>
+		</form>
+	</div><?php
 } 
 else 
-{	
+{
+			
 	//  Get wire that goes to this object to be deleted
-	if (sizeof($objects) < 2) 	
-		$fromObject = 0;
+	if (sizeof($r->objects) < 2) 	
+		$fromid = 0;
 	else
-		$fromObject = $objects[sizeof($objects) - 2];
+		$fromid = $r->objects[sizeof($r->objects) - 2];
 
-	$sql = "SELECT * 
-			FROM wires 
-			WHERE 
-				toid = '$object' 
-			AND fromid = '$fromObject' 
-			AND active = '1' 
-			LIMIT 1";
-	$result = MYSQL_QUERY($sql);
-	$myrow = MYSQL_FETCH_ARRAY($result);
-	$thisWire = $myrow['id'];
-	$sql = "UPDATE wires 
-			SET active = '0' 
-			WHERE id = '$thisWire'";
-	$result = MYSQL_QUERY($sql);
-	?>
-	<div class='monoHvy'>
-		Record deleted sucessfully.
-	</div>
-	<a href="<?php echo $dbAdmin; ?>browse.php<? echo urlBack(); ?>">continue...</a>
-	<?php
+	$message = $ww->delete_wire($fromid, $r->o);
+	
+	// if object has no wires to it, delete object
+	$sql = "UPDATE objects
+			SET active = '0'
+			WHERE id = $r->o'";
+	
+	?><div class="self-container">
+		<div class="self"><?php 
+			echo $message; 
+		?></div>
+		<div class="self">
+			<a href="<?php echo $admin_host; ?>browse.php<? echo $r->url_back(); ?>">continue...</a>
+		</div><?php
 }
-require_once("inc/foot.php"); ?>
+?></div>
+</div>
+<?php require_once("inc/foot.php"); ?>

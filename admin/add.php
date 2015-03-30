@@ -1,55 +1,39 @@
 <?php require_once("inc/head.php"); ?>
-
-<div id="body"><?php
-	if ($action != "add") 
+<div id="body-container">
+<div id="body">
+	<div class="parent-container"><?php 
+		for($i = 0; $i < count($parents); $i++) 
+		{ 
+		?><div class="parent">
+			<a href="<?php echo $parents[$i]['url']; ?>"><? 
+				echo $parents[$i]['name'];
+			?></a>
+		</div><?php 
+		} 
+	?></div><?php
+	$vars = array("name1", "deck", "body", "notes", "begin", "end", "url", "rank");
+	if ($r->action != "add") 
 	{
-	?><div class="parent-container"><?php
-	for($i = 0; $i < count($refs); $i++)
-		echo $refs[$i];
-	?><div class="parent">You are adding a new object.</div>
+	?><div class="self-container">
+		<div class="self">You are adding a new object.</div>
 	</div>
-	
 	<div id="form-container">
 		<form 
 			enctype="multipart/form-data" 
-			action="<?php echo $dbAdmin ."add.php". urlData(); ?>" 
+			action="<?php echo $admin_path ."add.php". $r->url_data(); ?>" 
 			method="post"
 		>
-			<div id="form">
-				<div>
-					<div width="90">Name</div>
-					<div><textarea name='name1'></textarea></div>
-				</div>
-				<div>
-					<div>Synopsis</div>
-					<div><textarea name='deck'></textarea></div>
-				</div>
-				<div>
-					<div>Detail</div>
-					<div><textarea name='body'></textarea></div>
-				</div>
-				<div>
-					<div>Notes</div>
-					<div><textarea name='notes'></textarea></div>
-				</div>
-				<div>
-					<div>Begin</div>
-					<div><textarea name='begin'></textarea></div>
-				</div>
-				<div>
-					<div>End</div>
-					<div><textarea name='end'></textarea></div>
-				</div>
-				<div>
-					<div>URL</div>
-					<div><textarea name='url'></textarea></div>
-				</div>
-				<div>
-					<div>Rank</div>
-					<div><textarea name='rank'></textarea></div>
+			<div id="form"><?php
+				// object data
+				foreach($vars as $var)
+				{
+				?><div>
+					<div><? echo $var; ?></div>
+					<div><textarea name='<? echo $var; ?>'></textarea></div>
 				</div><?php
+				}
 				//  upload new images
-				for ($j = 0; $j < 5; $j++)
+				for ($j = 0; $j < $max_uploads; $j++)
 				{
 				?><div>
 					<div>Image <?php echo $j+1; ?></div>
@@ -69,11 +53,11 @@
 					name='cancel' 
 					type='button' 
 					value='Cancel' 
-					onClick="javascript:location.href='<?php echo "browse.php". urlData();?>';"
+					onClick="javascript:location.href='<? echo "browse.php".$r->url_data();?>';"
 				> 
 			</div>
 			<div>
-				<input name='uploadsMax' type='hidden' value='<?php echo $j; ?>'>
+				<input name='$max_uploads' type='hidden' value='<?php echo $j; ?>'>
 				<input name='action' type='hidden' value='add'>
 			</div>
 		</form>
@@ -81,98 +65,66 @@
 	} 
 	else
 	{	
-		/* OBJECT */
-		if (!get_magic_quotes_gpc()) 
-		{
-			$name1 = addslashes($name1);
-			$name2 = addslashes($name2);
-			$deck = addslashes($deck);
-			$body = addslashes($body);
-			$notes = addslashes($notes); 
-			$url = addslashes($url); 
-			$begin = addslashes($begin);
-			$end = addslashes($end);
-			$rank = addslashes($rank);
-		}
-
+		/* objects */
+		$vars = array("name1", "deck", "body", "notes", "begin", "end", "url", "rank");
+		foreach($vars as $var)
+			$$var = addslashes($r->$var);
+	
 		//  Process variables
 		if (!$name1) 
 			$name1 = "Untitled";
 		$begin = ($begin) ? date("Y-m-d H:i:s", strToTime($begin)) : NULL;
 		$end = ($end) ? date("Y-m-d H:i:s", strToTime($end)) : NULL;
-
-		//  Add object to database
+		
+		
 		$dt = date("Y-m-d H:i:s");
-		$sql = "INSERT INTO objects (	
-					created, 
-					modified, 
-					name1,
-					url, 
-					notes, 
-					deck, 
-					body, 
-					begin, 
-					end, 
-					rank) 
-				VALUES(
-					'$dt',
-					'$dt',
-					'$name1',
-					'$url',
-					'$notes',
-					'$deck',
-					'$body', ";
-		$sql .= ($begin)  ? "'$begin', " : "null, ";
-		$sql .= ($end)  ? "'$end', " : "null, ";
-		$sql .= ($rank)  ? "'$rank')" : "null)";
-		$result = MYSQL_QUERY($sql);
-		$insertId = MYSQL_INSERT_ID();
+		$arr["created"] = "'".$dt."'";
+		$arr["modified"] = "'".$dt."'";
+		
+		foreach($vars as $var)
+			if($$var)
+				$arr[$var] = "'".$$var."'";
 
-		/* WIRES */
-		$sql = "INSERT INTO wires (
-					created, 
-					modified, 
-					fromid, 
-					toid) 
-				VALUES(
-					'". date("Y-m-d H:i:s") ."', 
-					'". date("Y-m-d H:i:s") ."', 
-					'$object', 
-					'$insertId')";
-		$result = MYSQL_QUERY($sql);
+		$toid = $ob->insert($arr);
+		
+		unset($arr);
+		
+		/* wires */
+		$fromid = $r->o;
+		$arr["created"] = "'".$dt."'";
+		$arr["modified"] = "'".$dt."'";
+		$arr["fromid"] = "'".$fromid."'";
+		$arr["toid"] = "'".$toid."'";
+		
+		$ww->insert($arr);
 
 		/* media */
-		for ($i = 0; $i < $uploadsMax; $i++) 
+		for ($i = 0; $i < $max_uploads; $i++) 
 		{
 			if ($imageName = $_FILES["upload".$i]["name"]) 
 			{
-				$sql = "SELECT id 
-						FROM media 
-						ORDER BY id DESC 
-						LIMIT 1";
-				$result = MYSQL_QUERY($sql);
-				$myrow = MYSQL_FETCH_ARRAY($result);
+				$m_rows = $mm->num_rows();
 
 				$nameTemp = $_FILES["upload". $i]['name'];
 				$typeTemp = explode(".", $nameTemp);
 				$type = $typeTemp[sizeof($typeTemp) - 1];
-				$targetFile = str_pad(($myrow["id"]+1), 5, "0", STR_PAD_LEFT) .".". $type;				
-
+				
+				$targetFile = str_pad(($m_rows+1), 5, "0", STR_PAD_LEFT) .".". $type;				
 
 				// ** Image Resizing **
-				// Only if folder ../media/_HI exists
-				// First upload the raw image to ../media/_HI/ folder
+				// Only if folder ../media/hi exists
+				// First upload the raw image to ../media/hi/ folder
 				// If upload works, then resize and copy to main ../media/ folder
 				// To turn on set $resize = TRUE; FALSE by default
 				$resize = FALSE;
 				$resizeScale = 65;
-				$targetPath = ($resize) ? "../media/_HI/" : "../media/";
+				$targetPath = ($resize) ? "../media/hi/" : "../media/";
 				$target = $targetPath . $targetFile;
 				$copy = copy($_FILES["upload".$i]['tmp_name'], $target);
 			
-				if ($copy) 
+				if($copy) 
 				{
-					if ($resize)
+					if($resize)
 					{
 						include('lib/SimpleImage.php');
 						$image = new SimpleImage();
@@ -187,26 +139,24 @@
 					}			
 					// Add to DB's image list
 					$dt = date("Y-m-d H:i:s");
-					$sql = "INSERT INTO media (
-								type, 
-								caption, 
-								object, 
-								created, 
-								modified) 
-							VALUES (
-								'$type', 
-								'', 
-								'$insertId', 
-								'$dt', 
-								'$dt')";
-					$result = MYSQL_QUERY($sql);
+
+					$m_arr["type"] = "'".$type."'";
+					$m_arr["object"] = "'".$toid."'";
+					$m_arr["created"] = "'".$dt."'";
+					$m_arr["modified"] = "'".$dt."'";
+					$mm->insert($m_arr);
 				}
 			}
 		}
-	?><div class="object-container">
-		<p>Object added successfully.</p>
-		<a href="<?php echo $dbAdmin; ?>browse.php<?php echo urlData(); ?>">CONTINUE. . . </a>
-	</div>
-	<?php } ?>
+		?><div class="self-container">
+			<div class="self">
+				<p>Object added successfully.</p>
+			</div>
+			<div class="self">
+				<a href="<? echo $admin_host; ?>browse.php<? echo $r->url_data(); ?>">continue... </a>
+			</div>
+		</div><?php 
+	} 
+?></div>
 </div>
 <?php require_once("inc/foot.php"); ?>

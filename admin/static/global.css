@@ -1,7 +1,9 @@
 * {
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+
+	font-family: "Helvetica Neue", "Menlo", monspace;
 }
 
 html {
@@ -14,11 +16,11 @@ body, table, tr, td
 	border-style: none;
 	empty-cells: show;
 	vertical-align: top;
-	padding: 0px 0px 0px 0px;
-	margin: 0px 0px 0px 0px;
+ 
+	padding: 0;
+	margin: 0;
 	color: #000;
 	text-align: left;
-	font-family: "Panic Sans", "Menlo", monospace;
 	font-size: 11px;
 	line-height: 13px; 
 }
@@ -46,16 +48,16 @@ a::after {
 }
 
 textarea {
-	font-family: "Panic Sans";
 	background-color: #44444b;
 	color: #ffffff;
 	border-width: 0px;
 	padding: 5px;
 	width: 100%;
+	resize: none;
 }
 
 input {
-	font-family: "Panic Sans";
+
 }
 
 ::selection {
@@ -69,11 +71,16 @@ input {
 	margin-right: auto;
 }
 
+/* header styles */
 #header {
 	background-color: #fff;
 	padding: 10px;
 }
 
+#header:first-child {
+}
+
+/* body styles */
 #body {
 	background-color: #eee;
 	/*padding: 10px;*/
@@ -82,26 +89,25 @@ input {
 	margin-right: auto;
 }
 
-#footer {
+.parent:empty,
+.self:empty {
+	display: none;
+}
+
+/* parents */
+
+/* self */
+
+/* children */
+
+/* form */
+
+#form-container {
 	padding: 10px;
 }
 
-#footer-container {
-	color: #fff;
-	background-color: #000;
-	width: 100%;
-}
+/* actions */
 
-#footer > a:hover {
-	color: #fff;
-}
-
-#header:first-child {
-}
-
-.ghost {
-	visibility: hidden;
-}
 .children-container > div:nth-child(2n + 0) {
 	background-color: #ddd;
 }
@@ -114,6 +120,28 @@ input {
 	margin-right: 5px;
 }
 
+.child:hover {
+	background-color: #0000ff;
+}
+
+
+/* footer styles */
+
+#footer-container {
+
+	width: 100%;
+}
+
+#footer {
+	color: #fff;
+	background-color: #000;
+	padding: 10px;
+}
+
+#footer > a:hover {
+	color: #fff;
+}
+
 #refs > div, 
 .parent-container > .parent,
 .self-container > .self,
@@ -122,18 +150,15 @@ input {
 	padding: 5px;
 }
 
-.parent:empty,
-.self:empty {
-	display: none;
+a > img {
+	width: 50%;
+	float: left;
 }
 
-.object-container {
-	background-color: #eee;
-	/* padding: 10px; */
-}
+/* utilities */
 
-#form-container {
-	padding: 10px;
+.ghost {
+	visibility: hidden;
 }
 
 .clearer {
