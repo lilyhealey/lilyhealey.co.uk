@@ -219,6 +219,11 @@ class Objects extends Model
 		
 		return $this->get_all($fields, $tables, $where, $order, $limit);
 	}
+	
+	public function url_data($o)
+	{
+		
+	}
 }
 
 // int: id, active, fromid, toid

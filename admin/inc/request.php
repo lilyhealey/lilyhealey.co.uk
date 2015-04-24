@@ -94,33 +94,6 @@ class Request
 		$url = "?object=" . implode(",", $objects);
 		return $url;
 	}
-	
-	// public function parents()
-// 	{
-// 		$parents[] = ""; // is this necessary?
-// 		$objects = $this->objects;
-// 		$ob = new Objects();
-// 
-// 		for ($i = 0; $i < count($objects) - 1; $i++) 
-// 		{
-// 			$item = $ob->get($objects[$i]);
-// 			$name = strip_tags($item["name1"]);
-// 
-// 			// Each panel expands on title click
-// 			$parents[$i]["url"] = $admin_path . "browse.php?object=";
-// 			for ($j = 0; $j < $i + 1; $j++)
-// 			{
-// 				$parents[$i]["url"] .= $objects[$j];
-// 				if ($j < $i)
-// 					$parents[$i]["url"] .= ",";
-// 			}
-// 			$parents[$i]["name"] = $name;
-// 		}
-// 		
-// 		if($parents[0] == "")
-// 			unset($parents);
-// 		return $parents;
-// 	}
 }
 
 ?>

@@ -134,7 +134,7 @@ if ($r->action != "update" && $r->o)
 						name='cancel' 
 						type='button' 
 						value='Cancel' 
-						onClick="javascript:location.href='<?php echo "browse.php". $r->url_back(); ?>';" 
+						onClick="javascript:location.href='<? echo "browse.php".$r->url_back(); ?>';" 
 					>
 				</div>
 				<div>

@@ -66,6 +66,6 @@ else
 			<div id="header-container">
 				<div id="header">
 					<a href="<?php echo $admin_path; ?>browse.php"><?php 
-					echo $r->o; ?> db</a>
+					echo $db_name ?> db</a>
 				</div>
 			</div>

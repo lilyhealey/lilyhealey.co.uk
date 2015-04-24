@@ -19,7 +19,7 @@ if (strtolower($r->action) != "delete")
 	
 	// determine if children have other ancestors
 	// ie, will they be orphaned after this object is deleted
-	foreach($children as $child)
+	foreach($children as &$child)
 		$child["dependent"] = TRUE;
 	$fields = array("fromid");
 	$tables = array("wires");
@@ -34,7 +34,7 @@ if (strtolower($r->action) != "delete")
 			if($items[$j]["fromid"] != $r->o)
 				$children[$i]["dependent"] = FALSE;
 		}
-		if($children[$i]["dependent"] = TRUE)
+		if($children[$i]["dependent"] == TRUE)
 			$k++;
 	}
 	//  Display warning
