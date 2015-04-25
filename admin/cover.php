@@ -1,6 +1,3 @@
-<?php 
-require_once("inc/head.php"); 
-?>
 <div id="body-container">
 	<div id="body" class="centre">
 		<div class="parent-container">
@@ -8,8 +5,8 @@ require_once("inc/head.php");
 			<div class="parent"><?php echo date("d M Y H:i:s T"); ?></div>
 			<div class="parent">
 				<a href="browse.php">enter database...</a>
-			</div>
-		</div>
+			</div><?
+			print_r($x);
+		?></div>
 	</div>
 </div>
-<?php require_once("inc/foot.php"); ?>

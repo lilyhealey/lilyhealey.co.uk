@@ -1,6 +1,6 @@
 <?php require_once("inc/head.php"); ?>
 <div id="body-container">
-<div id="body">
+<div id="body" class="centre">
 	<div class="parent-container"><?php 
 		for($i = 0; $i < count($parents); $i++) 
 		{ 
@@ -36,7 +36,7 @@
 				for ($j = 0; $j < $max_uploads; $j++)
 				{
 				?><div>
-					<div>Image <?php echo $j+1; ?></div>
+					<div>image <?php echo $j+1; ?></div>
 					<div>
 						<input type='file' name='upload<?php echo $j; ?>'>
 					</div>
@@ -57,7 +57,6 @@
 				> 
 			</div>
 			<div>
-				<input name='$max_uploads' type='hidden' value='<?php echo $j; ?>'>
 				<input name='action' type='hidden' value='add'>
 			</div>
 		</form>

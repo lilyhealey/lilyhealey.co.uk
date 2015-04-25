@@ -84,9 +84,6 @@ input {
 #body {
 	background-color: #eee;
 	/*padding: 10px;*/
-	max-width: 500px;
-	margin-left: auto;
-	margin-right: auto;
 }
 
 .parent:empty,
@@ -106,6 +103,11 @@ input {
 	padding: 10px;
 }
 
+.centre {
+	max-width: 500px;
+	margin-left: auto;
+	margin-right: auto;
+}
 /* actions */
 
 .children-container > div:nth-child(2n + 0) {

@@ -1,6 +1,6 @@
 <?php require_once("inc/head.php"); ?>
 <div id="body-container">
-<div id="body">
+<div id="body" class="centre">
 	<div class="self-container">
 		<div class="self">Open Records Generator</div> 
 		<div class="self">Version 2.9.5, August 7, 2014</div>

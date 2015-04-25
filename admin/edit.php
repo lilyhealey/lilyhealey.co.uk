@@ -1,6 +1,6 @@
 <?php require_once("inc/head.php"); ?>
 <div id="body-container">
-<div id="body">
+<div id="body" class="centre">
 	<div class="parent-container"><?php 
 		for($i = 0; $i < count($parents); $i++) 
 		{ 

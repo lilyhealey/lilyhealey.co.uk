@@ -64,7 +64,7 @@ else
 	<body>
 		<div id="page">
 			<div id="header-container">
-				<div id="header">
+				<div id="header" class="centre">
 					<a href="<?php echo $admin_path; ?>browse.php"><?php 
 					echo $db_name ?> db</a>
 				</div>
