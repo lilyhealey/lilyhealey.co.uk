@@ -1,4 +1,3 @@
-<?php require_once("inc/head.php"); ?>
 <div id="body-container">
 <div id="body" class="centre">
 	<div class="parent-container"><?php 
@@ -13,10 +12,10 @@
 	?></div>
 <?php
 $vars = array("name1", "deck", "body", "notes", "begin", "end", "url", "rank");
-if ($r->action != "update" && $r->o)
+if ($r->action != "update" && $u->id)
 {
 	//  get existing image data
-	$medias = $ob->media($r->o);
+	$medias = $ob->media($u->id);
 	$num_medias = count($medias);
 	
 	/*
@@ -30,14 +29,14 @@ if ($r->action != "update" && $r->o)
 		$m_padded = "" . str_pad($medias[$i]["id"], 5, "0", STR_PAD_LEFT);
 		$medias[$i]["file"] = $media_path . $m_padded . "." . $medias[$i]["type"];
 		if ($medias[$i]["type"] == "pdf")
-			$medias[$i]["display"] = "media/pdf.png";
+			$medias[$i]["display"] = $admin_path."media/pdf.png";
 		else
 			$medias[$i]["display"] = $medias[$i]["file"];
 	}
 
 	// object contents
-	if($r->o)
-		$item = $ob->get($r->o);
+	if($u->id)
+		$item = $ob->get($u->id);
 	else
 		$item = $ob->get(0);
 	$name = strip_tags($item["name1"]);
@@ -45,14 +44,14 @@ if ($r->action != "update" && $r->o)
 	
 	<div class="self-container">
 		<div class="self">
-			<a href="browse.php<?php echo $r->url_data(); ?>"><?php echo $name; ?></a>
+			<a href="<? echo $admin_path; ?>browse/<?php echo $u->urls(); ?>"><?php echo $name; ?></a>
 		</div>
 	</div>
 	<div id="form-container">
 		<form
 			method="post"
 			enctype="multipart/form-data" 
-			action="<?php echo htmlspecialchars($admin_path.'edit.php'.$r->url_data()); ?>" 
+			action="<?php echo htmlspecialchars($admin_path.'edit/'.$u->urls()); ?>" 
 		>
 			<div class="form"><?php
 				// show object data
@@ -134,7 +133,7 @@ if ($r->action != "update" && $r->o)
 						name='cancel' 
 						type='button' 
 						value='Cancel' 
-						onClick="javascript:location.href='<? echo "browse.php".$r->url_back(); ?>';" 
+						onClick="javascript:location.href='<? echo $admin_path."browse/".$u->urls(); ?>';" 
 					>
 				</div>
 				<div>
@@ -156,7 +155,7 @@ if ($r->action != "update" && $r->o)
 } 
 else 
 {
-	$item = $ob->get($r->o);
+	$item = $ob->get($u->id);
 	
 	/* objects */
 	$vars = array("name1", "deck", "body", "notes", "begin", "end", "url", "rank");
@@ -168,6 +167,8 @@ else
 		$name1 = "Untitled";
 	$begin = ($begin) ? date("Y-m-d H:i:s", strToTime($begin)) : NULL;
 	$end = ($end) ? date("Y-m-d H:i:s", strToTime($end)) : NULL;
+	if(!$url)
+		$url = slug($name1);
 	
 	//  check for differences
 	foreach($vars as $var)
@@ -184,7 +185,7 @@ else
 	{
 		$arr["modified"] = "'".date("Y-m-d H:i:s")."'";
 		$z = TRUE;
-		$sqlA = $ob->update($r->o, $arr);
+		$sqlA = $ob->update($u->id, $arr);
 	}
 
 	$mflag = FALSE;
@@ -231,7 +232,7 @@ else
 				$dt = date("Y-m-d H:i:s");
 
 				$m_arr["type"] = "'".$type."'";
-				$m_arr["object"] = "'".$r->o."'";
+				$m_arr["object"] = "'".$u->id."'";
 				$m_arr["created"] = "'".$dt."'";
 				$m_arr["modified"] = "'".$dt."'";
 				$m_arr["caption"] = "'".$r->captions[count($r->medias)+$i]."'";
@@ -293,9 +294,8 @@ else
 		echo count($r->medias);
 		?></div>
 		<div class="self">
-			<a href="<?php echo $admin_path;?>edit.php<?php echo $r->url_data(); ?>">refresh object</a>
+			<a href="<?php echo $admin_path;?>edit/<?php echo $u->urls(); ?>">refresh object</a>
 		</div>
 	</div><?php 
 } ?></div>
 </div>
-<?php require_once("inc/foot.php"); ?>

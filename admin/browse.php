@@ -1,7 +1,7 @@
-<?php require_once("inc/head.php"); 
+<?php
 
 //  get children (if any)
-$children = $ob->children($r->o);
+$children = $ob->children($u->id);
 
 $pad = floor(log10(count($children))) + 1;
 if($pad < 2) 
@@ -16,17 +16,17 @@ for($i = 0; $i < count($children); $i++)
 	$children[$i]["name"] = strip_tags($name);
 	
 	// object url
-	$children[$i]["url"] = $admin_path . "browse.php" . $r->url_data();
-	if (sizeof($r->objects))
-		$children[$i]["url"] .= ",";
+	$children[$i]["url"] = $admin_path . "browse/" . $u->urls();
+	if (sizeof($u->ids))
+		$children[$i]["url"] .= "/";
 	$children[$i]["url"] .= $children[$i]["o"];
 	
 	// object 0-padded index
 	$children[$i]["n"] = str_pad($i+1, $pad, "0", STR_PAD_LEFT);
 }
 
-if($r->o)
-	$item = $ob->get($r->o);
+if($u->id)
+	$item = $ob->get($u->id);
 else
 	$item = $ob->get(0);
 $name = strip_tags($item["name1"]);
@@ -46,13 +46,13 @@ $name = strip_tags($item["name1"]);
 		?></div>
 		<div class="self-container">
 			<div class="self"><?php 
-				if($r->o) { ?>
+				if($u->id) { ?>
 				<span><?php echo $name; ?></span>
 				<span>
-					<a href="edit.php<?php echo $r->url_data(); ?>">edit</a>
+					<a href="<? echo $admin_path; ?>edit/<?php echo $u->urls(); ?>">edit</a>
 				</span>
 				<span>
-					<a href="delete.php<?php echo $r->url_data(); ?>">delete</a>
+					<a href="<? echo $admin_path; ?>delete/<?php echo $u->urls(); ?>">delete</a>
 				</span><?php } 
 			?></div>
 		</div>
@@ -68,11 +68,15 @@ $name = strip_tags($item["name1"]);
 				</span>
 			</div><?php
 			}
+// 			print_r($u->ids);
+// 			print_r($u->urls);
+// 			echo $u->id;
+// 			echo $u->url;
+// 			print_r($children);
 		?></div>
 		<div class="actions">
-			<a href="add.php<?php echo $r->url_data(); ?>">add object</a>
-			<a href="link.php<?php echo $r->url_data(); ?>">link</a>
+			<a href="<? echo $admin_path; ?>add/<?php echo $u->urls(); ?>">add object</a>
+			<a href="<? echo $admin_path; ?>link/<?php echo $u->urls(); ?>">link</a>
 		</div>
 	</div>
 </div>
-<?php require_once("inc/foot.php"); ?>

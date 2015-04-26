@@ -1,14 +1,13 @@
-<?php require_once("inc/head.php"); ?>
 <div id="body-container">
-<div id="body" class="centre">
-	<div class="self-container">
-		<div class="self">Open Records Generator</div> 
-		<div class="self">Version 2.9.5, August 7, 2014</div>
-		<div class="self">
-		<a href="http://www.o-r-g.com/" target="_blank">O R G inc.</a>
+	<div id="body" class="centre">
+		<div class="self-container">
+			<div class="self">Open Records Generator</div> 
+			<div class="self">Version 2.9.5, August 7, 2014</div>
+			<div class="self">
+				<a href="http://www.o-r-g.com/" target="_blank">O R G inc.</a>
+			</div>
 		</div>
-	</div>
-	<textarea cols="60" rows="16">
+		<textarea cols="60" rows="16">
 OPEN-RECORDS-GENERATOR can accommodate all standards-compliant HTML tags. This includes basic markup, advanced formatting and embedding. The most common HTML tags are provided here for copy-paste reference:
 
 <i>words here appear in italics</i>
@@ -114,8 +113,7 @@ NO WARRANTY
 12. IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 
 END OF TERMS AND CONDITIONS
-	</textarea> 
-	<div class="actions"><a href="javascript:history.back();">&lt; return</a></div>
+			</textarea> 
+		<div class="actions"><a href="javascript:history.back();">&lt; return</a></div>
+	</div>
 </div>
-</div>
-<?php require_once("inc/foot.php"); ?>

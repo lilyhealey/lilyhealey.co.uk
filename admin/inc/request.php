@@ -1,21 +1,8 @@
 <?php
-/*
- * 
- *
- *
- */
+
 class Request
 {
 	public $page = ''; 	// is this variable even used?
-	public $remote_user;// logged in user via .htaccess, .htpasswd
-	
-	/* object info */
-	public $object; 	// comma-separated string
-	public $objects; 	// array
-	public $o; 			// most recent object id
-	public $name;
-	public $parents;
-	public $children;
 		
 	/* [add, edit] post variables */
 	public $name1;
@@ -41,58 +28,18 @@ class Request
 	/* link */
 	public $wires_toid;
 	
-//	public $name;
-
 	function __construct()
 	{
 		$this->page = basename($_SERVER['PHP_SELF'], ".php");
-		$this->remote_user = $_SERVER['REDIRECT_REMOTE_USER'];
 		
 		// post variables
-		$vars = array(	'object', 
-						'action', 'submit', 
-						'name1', 'deck', 'body', 'notes', 'begin', 'end', 'url', 'rank',
+		$vars = array(	'name1', 'deck', 'body', 'notes', 'begin', 'end', 'url', 'rank',
 						'medias', 'types', 'captions', 'ranks', 'deletes',
+						'action', 'submit',
 						'wires_toid');
 
 		foreach($vars as $v)	
-			$this->$v = $_REQUEST[$v];
-		
-		// handle multiple objects
-		$objects = explode(",", $this->object);
-		
-		// $o refers to most recent object
-		$o = $objects[count($objects)-1];
-		if(!$o)
-			$o = 0;
-		if (sizeof($objects) == 1 && empty($objects[0])) 
-			unset($objects);
-		$this->objects = $objects;
-		$this->o = $o;
-		
-		// variables to set
-		// $name
-		// $o
-		// $object
-		// $objects
-		// $parents
-		// $children
-	}
-	
-	public function url_data()
-	{
-		$url = "?object=";
-		if($this->objects)
-			$url .= implode(",", $this->objects);
-		return $url;
-	}
-	
-	public function url_back()
-	{
-		$objects = $this->objects;
-		array_pop($objects);
-		$url = "?object=" . implode(",", $objects);
-		return $url;
+			$this->$v = $_POST[$v];
 	}
 }
 
