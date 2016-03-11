@@ -16,15 +16,20 @@ $mm = new Media();
 $ww = new Wires();
 $uu = new URL();
 
+$title = "leh";
+if($uu->id)
+	$title = $oo->get($uu->id)['name1']." - ".$title;
 ?><!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>leh</title>
+		<title><? echo $title; ?></title>
 		
 		<!-- shortcut icon -->
-        <link rel="shortcut icon" href="http://24.media.tumblr.com/avatar_cb6c249c5e5c_128.png">
+        <!-- link rel="shortcut icon" href="http://24.media.tumblr.com/avatar_cb6c249c5e5c_128.png" -->
+		<link rel="shortcut icon" href="/media/png/icon.png">
+		<link rel="mask-icon" href="/media/svg/icon.svg">
 		
 		<!-- add jquery library -->
         <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
